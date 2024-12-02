@@ -1,10 +1,6 @@
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-
-{-# HLINT ignore "Use bimap" #-}
 module Day1 where
-
 import Data.Char (isSpace)
-import Data.List
+import Data.List (sort)
 
 main :: IO ()
 main = do
@@ -14,8 +10,6 @@ main = do
 
   print ("first Part: " ++ show (firstPart $ sortTupleLists ls))
   print ("second Part: " ++ show (secondPart ls))
-
-  return ()
 
 formatLine :: [Char] -> (Int, Int)
 formatLine xs =
