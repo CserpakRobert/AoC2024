@@ -1,7 +1,6 @@
-module Day3 (main) where
-import Text.Regex.Posix
-
-
+module Day3 () where
+  
+import Text.Regex.Posix ( (=~), AllTextMatches(getAllTextMatches) )
 
 main :: IO ()
 main = do

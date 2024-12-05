@@ -1,4 +1,4 @@
-module Day4 (main) where
+module Day4 () where
 
 import Data.List (isPrefixOf)
 
