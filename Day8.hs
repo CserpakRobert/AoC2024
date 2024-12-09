@@ -1,6 +1,7 @@
 module Day8 () where
 
 import Data.List (nub)
+
 type Point = (Int, Int)
 
 main :: IO ()
@@ -14,12 +15,12 @@ main = do
   print $ "firstPart: " ++ show (firstPart input xLength yLength)
   print $ "secondPart: " ++ show (secondPart (parseInput [] input (1, 1)) xLength yLength)
 
-parseInput :: [(Char, [Point])] -> [String] -> Point -> [(Char, [Point])] 
+parseInput :: [(Char, [Point])] -> [String] -> Point -> [(Char, [Point])]
 parseInput as ((x : xs) : ys) (a, b)
   | x == '.' = parseInput as (xs : ys) (a, b + 1)
   | otherwise = parseInput (addAntennaPos as x (a, b)) (xs : ys) (a, b + 1)
 parseInput as ([] : ys) (a, b) = parseInput as ys (a + 1, 1)
-parseInput as _ _ = as 
+parseInput as _ _ = as
 
 addAntennaPos :: [(Char, [Point])] -> Char -> Point -> [(Char, [Point])]
 addAntennaPos ((c, as) : xs) na np
@@ -33,13 +34,14 @@ validLocation x y (a, b) = a > 0 && b > 0 && a <= x && b <= y
 firstPart :: [String] -> Int -> Int -> Int
 firstPart input x y = length . nub . filter (validLocation x y) . locations $ parseInput [] input (1, 1)
 
-secondPart ::  [(Char, [Point])] -> Int -> Int -> Int
-secondPart input x y = length . nub $ moreLocations x y input ++ atleastTwoAntennaPoss input where
-  atleastTwoAntennaPoss :: [(Char, [Point])] -> [Point]
-  atleastTwoAntennaPoss ((c, ps) : as)
-    | length ps >= 2 = ps ++ atleastTwoAntennaPoss as
-    | otherwise = atleastTwoAntennaPoss as
-  atleastTwoAntennaPoss [] = []
+secondPart :: [(Char, [Point])] -> Int -> Int -> Int
+secondPart input x y = length . nub $ moreLocations x y input ++ atleastTwoAntennaPoss input
+  where
+    atleastTwoAntennaPoss :: [(Char, [Point])] -> [Point]
+    atleastTwoAntennaPoss ((c, ps) : as)
+      | length ps >= 2 = ps ++ atleastTwoAntennaPoss as
+      | otherwise = atleastTwoAntennaPoss as
+    atleastTwoAntennaPoss [] = []
 
 locations :: [(Char, [Point])] -> [Point]
 locations [] = []
@@ -58,11 +60,9 @@ moreLocations x y ((c, p : ps) : xs) = moreReflections x y p ps ++ moreLocations
     moreReflections :: Int -> Int -> Point -> [Point] -> [Point]
     moreReflections _ _ _ [] = []
     moreReflections xBound yBound p@(x, y) ((a, b) : ps) =
-      takeWhile (validLocation xBound yBound) (rightReflections (x, y) (a, b))
-        ++ takeWhile (validLocation xBound yBound) (leftReflections (x, y) (a, b))
+      takeWhile (validLocation xBound yBound) (reflections (x, y) (a, b))
+        ++ takeWhile (validLocation xBound yBound) (reflections (a, b) (x, y))
         ++ moreReflections xBound yBound p ps
       where
-        rightReflections :: Point -> Point -> [Point]
-        rightReflections (x, y) (a, b) = let (c, d) = (2 * x - a, 2 * y - b) in (c, d) : rightReflections (c, d) (x, y)
-        leftReflections :: Point -> Point -> [Point]
-        leftReflections (x, y) (a, b) = let (c, d) = (2 * a - x, 2 * b - y) in (c, d) : leftReflections (a, b) (c, d)
+        reflections :: Point -> Point -> [Point]
+        reflections (x, y) (a, b) = let (c, d) = (2 * x - a, 2 * y - b) in (c, d) : reflections (c, d) (x, y)
